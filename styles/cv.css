@@ -1,0 +1,97 @@
+:root {
+  --fg: #1a1a1a;
+  --muted: #666;
+  --rule: #d8d8d8;
+  --accent: #1a1a1a;
+  --max-width: 780px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #f4f4f4;
+  color: var(--fg);
+  font: 11pt/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.cv {
+  max-width: var(--max-width);
+  margin: 24px auto;
+  padding: 48px 56px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.cv-header { text-align: center; margin-bottom: 24px; }
+.cv-header h1 {
+  margin: 0 0 4px;
+  font-size: 28pt;
+  letter-spacing: 2px;
+  font-weight: 700;
+}
+.cv-header .tagline { margin: 0 0 8px; font-size: 12pt; color: var(--fg); }
+.cv-header .contact { margin: 0; color: var(--muted); font-size: 10pt; }
+.cv-header .contact .sep { margin: 0 8px; }
+
+.summary { margin: 16px 0 24px; }
+.summary p { margin: 0; }
+
+.section { margin-top: 28px; }
+.section h2 {
+  margin: 0 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 13pt;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.job { margin-bottom: 18px; page-break-inside: avoid; break-inside: avoid; }
+.job header { margin-bottom: 4px; }
+.job h3 {
+  margin: 0;
+  font-size: 11.5pt;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+.job .period { color: var(--muted); font-weight: 400; font-size: 10pt; white-space: nowrap; }
+.job .role { margin: 0; font-style: italic; color: var(--muted); font-size: 10.5pt; }
+.job-body p { margin: 6px 0; }
+
+.skills-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.skills-grid li {
+  border: 1px solid var(--rule);
+  padding: 8px 10px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 10.5pt;
+}
+
+a { color: inherit; }
+
+@page {
+  size: A4;
+  margin: 14mm 14mm;
+}
+
+@media print {
+  html, body { background: #fff; }
+  .cv {
+    margin: 0 auto;
+    padding: 0;
+    box-shadow: none;
+    max-width: none;
+  }
+}
