@@ -4,7 +4,7 @@ import matter from "gray-matter";
 import { existsSync } from "node:fs";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../..");
-const CV_CONTENT = path.resolve(ROOT, "../cv-builder/content");
+const CV_CONTENT = path.resolve(ROOT, "cv/content");
 const KNOWLEDGE_DIR = path.resolve(ROOT, "knowledge");
 
 export async function buildProfile() {

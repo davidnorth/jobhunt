@@ -4,7 +4,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import { marked } from "marked";
 
-const CV_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../../cv-builder");
+const CV_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../..");
 
 const md = (s) => (s ? marked.parse(String(s).trim()) : "");
 const mdInline = (s) => (s ? marked.parseInline(String(s).trim()) : "");
@@ -12,7 +12,7 @@ const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 export async function listVariants() {
-  const files = await readdir(path.join(CV_ROOT, "content"));
+  const files = await readdir(path.join(CV_ROOT, "cv", "content"));
   return files
     .filter((f) => f.endsWith(".md"))
     .map((f) => f.replace(/\.md$/, ""));
@@ -20,8 +20,8 @@ export async function listVariants() {
 
 export function resolveContentPath(name) {
   const candidates = [
-    path.join(CV_ROOT, "content", `${name}.md`),
-    path.join(CV_ROOT, "content", name),
+    path.join(CV_ROOT, "cv", "content", `${name}.md`),
+    path.join(CV_ROOT, "cv", "content", name),
   ];
   for (const c of candidates) if (existsSync(c)) return c;
   throw new Error(`CV variant not found: ${name}`);
@@ -31,8 +31,8 @@ export async function renderCv(name) {
   const contentPath = resolveContentPath(name);
   const [raw, css, template] = await Promise.all([
     readFile(contentPath, "utf8"),
-    readFile(path.join(CV_ROOT, "styles", "cv.css"), "utf8"),
-    readFile(path.join(CV_ROOT, "template.html"), "utf8"),
+    readFile(path.join(CV_ROOT, "cv", "cv.css"), "utf8"),
+    readFile(path.join(CV_ROOT, "cv", "template.html"), "utf8"),
   ]);
 
   const { data, content } = matter(raw);
