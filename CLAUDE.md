@@ -1,67 +1,75 @@
-# CV
+# CV Monorepo
 
-Local, file-based CV generator. Edit markdown + CSS, get a clean HTML page. Print to PDF from your browser. No paid tools, no Tailwind.
+Two local tools: a CV generator and an AI-powered job discovery agent.
 
-## How it works
+## cv-builder
 
-- **Content** lives in `content/<variant>.md` — markdown body for the summary, YAML frontmatter for structured data (name, contact, sections with experience/skills/etc).
-- **Styling** lives in `styles/cv.css` — single file, edit freely.
-- **Template** is `template.html` — placeholders filled by `scripts/render.js`.
-- **Variants**: keep multiple files in `content/` (e.g. `default.md`, `frontend.md`, `management.md`) and pick by name on the CLI.
-
-## Commands
-
-Install once: `npm install`
+File-based CV generator. Edit markdown + CSS, get a clean HTML page. Print to PDF from your browser.
 
 ```
-npm run dev [variant]      # live-reload dev server at http://localhost:4321
-npm run build [variant]    # writes dist/<variant>.html
+cd cv-builder
+npm install
+npm run dev [variant]    # live-reload at http://localhost:4321
+npm run build [variant]  # writes dist/<variant>.html
 ```
 
-`variant` defaults to `default` (i.e. `content/default.md`). The dev server watches the chosen content file plus `styles/` and `template.html` and reloads on change.
+`variant` defaults to `default` (i.e. `content/default.md`).
 
 To produce a PDF, open the HTML in a browser and use Cmd+P → Save as PDF.
 
-## Typical loop
+## job-hunt
 
-1. `npm run dev frontend` — tweak content + CSS in the browser.
-2. `npm run build frontend` — get `dist/frontend.html`, then print to PDF from the browser.
-
-## Layout
+AI-powered job discovery. Aggregates your CV data + knowledge base, scrapes job boards, scores fits with an LLM, and serves a web dashboard.
 
 ```
-content/        # one markdown file per CV variant
-styles/cv.css   # all styling
-template.html   # HTML shell
-scripts/
-  render.js     # md + frontmatter -> HTML
-  dev.js        # http server + chokidar + ws live reload
-  build.js      # render -> HTML
-dist/           # build output (gitignored)
+cd job-hunt
+npm install
+npm run dev    # dev server at http://localhost:4322
+npm start      # production server at http://localhost:4322
 ```
 
-## Frontmatter shape
+Set `DEEPSEEK_API_KEY` in `job-hunt/.env` before running.
 
-```yaml
----
-name: David North
-title: Software Engineer and Manager
-contact: [you@example.com, "07xxx", Town]
-sections:
-  - type: experience
-    title: Work Experience
-    items:
-      - company: Acme
-        role: Senior Developer
-        period: 2023 - 2025
-        description: |
-          Markdown body. Multiple paragraphs ok.
-  - type: skills
-    title: Skills
-    items: [JavaScript, Ruby on Rails, CSS]
----
+### How it works
 
-Markdown summary goes in the body, below the frontmatter.
+1. **Profile engine** reads all `cv-builder/content/*.md` (extracting skills, experience, roles) and `job-hunt/knowledge/*.md` (your preferences: desired role, salary, location, etc.) and builds a structured JSON profile.
+2. **Job discovery** scrapes Indeed (and later LinkedIn) for matching roles.
+3. **AI scoring** sends each job + your profile to Deepseek for a 0-100 fit score with reasoning.
+4. **Dashboard** — a web UI at localhost:4322 to browse matches, view reports, and trigger runs.
+
+### Layout
+
 ```
+cv-builder/         # CV generator
+  content/*.md      # CV variants (also used by job-hunt for profile)
+  styles/cv.css
+  template.html
+  scripts/
+    render.js
+    dev.js
+    build.js
 
-Other section types: `list` (bulleted markdown items) and `prose` (free markdown body).
+job-hunt/           # AI job discovery
+  knowledge/        # your preferences in markdown
+    profile.md
+  scripts/
+    server.js       # Express web server
+    dev.js          # dev server with live reload
+    lib/
+      profile.js    # CV + knowledge → structured profile
+      scorer.js     # Deepseek LLM job fit scorer
+      store.js      # SQLite persistence
+      scheduler.js  # cron-like daily runner
+      sources/
+        indeed.js   # Playwright-based Indeed scraper
+  styles/
+    job-hunt.css
+  views/            # server-rendered HTML
+    layout.html
+    dashboard.html
+    jobs.html
+    report.html
+    profile.html
+  database/
+    schema.sql
+```

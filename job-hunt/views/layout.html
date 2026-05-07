@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{title}} &mdash; Job Hunt</title>
+  <style>{{css}}</style>
+</head>
+<body>
+  <header class="topbar">
+    <a href="/" class="logo">Job Hunt</a>
+    <nav>
+      <a href="/" class="{{activeDashboard}}">Dashboard</a>
+      <a href="/jobs" class="{{activeJobs}}">Jobs</a>
+      <a href="/reports" class="{{activeReports}}">Reports</a>
+      <a href="/profile" class="{{activeProfile}}">Profile</a>
+    </nav>
+  </header>
+  <main class="content">
+    {{content}}
+  </main>
+  {{liveReload}}
+</body>
+</html>
