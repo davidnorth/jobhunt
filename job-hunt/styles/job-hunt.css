@@ -511,3 +511,33 @@ h2 {
   font-weight: 600;
   margin: 20px 0 8px;
 }
+
+/* CVs page */
+
+.cvs-page .subtitle {
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.cv-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 480px;
+}
+
+.cv-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-alt);
+}
+
+.cv-card-name {
+  font-weight: 600;
+  font-size: 15px;
+  text-transform: capitalize;
+}

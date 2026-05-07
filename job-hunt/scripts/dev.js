@@ -5,6 +5,7 @@ import { WebSocketServer } from "ws";
 import { createApp } from "./server.js";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const CV_ROOT = path.resolve(ROOT, "..", "cv-builder");
 const PORT = Number(process.env.PORT) || 4322;
 
 const app = createApp({ liveReload: true });
@@ -22,6 +23,9 @@ const watched = [
   path.join(ROOT, "styles"),
   path.join(ROOT, "scripts"),
   path.join(ROOT, "knowledge"),
+  path.join(CV_ROOT, "content"),
+  path.join(CV_ROOT, "styles"),
+  path.join(CV_ROOT, "template.html"),
 ];
 
 const watcher = chokidar.watch(watched, { ignoreInitial: true });

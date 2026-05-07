@@ -28,12 +28,19 @@ npm run dev    # dev server at http://localhost:4322
 npm start      # production server at http://localhost:4322
 ```
 
-Set `DEEPSEEK_API_KEY` in `job-hunt/.env` before running.
+Set `DEEPSEEK_API_KEY`, `ADZUNA_APP_ID`, and `ADZUNA_APP_KEY` in `job-hunt/.env` before running.
+
+To run a discovery without the server:
+
+```
+cd job-hunt
+npm run run-discovery
+```
 
 ### How it works
 
 1. **Profile engine** reads all `cv-builder/content/*.md` (extracting skills, experience, roles) and `job-hunt/knowledge/*.md` (your preferences: desired role, salary, location, etc.) and builds a structured JSON profile.
-2. **Job discovery** scrapes Indeed (and later LinkedIn) for matching roles.
+2. **Job discovery** queries the Adzuna API for matching roles across all search terms derived from the profile.
 3. **AI scoring** sends each job + your profile to Deepseek for a 0-100 fit score with reasoning.
 4. **Dashboard** — a web UI at localhost:4322 to browse matches, view reports, and trigger runs.
 
@@ -55,21 +62,18 @@ job-hunt/           # AI job discovery
   scripts/
     server.js       # Express web server
     dev.js          # dev server with live reload
+    run.js          # headless discovery run (no server needed)
     lib/
       profile.js    # CV + knowledge → structured profile
       scorer.js     # Deepseek LLM job fit scorer
       store.js      # SQLite persistence
       scheduler.js  # cron-like daily runner
       sources/
-        indeed.js   # Playwright-based Indeed scraper
+        adzuna.js   # Adzuna REST API source
   styles/
     job-hunt.css
   views/            # server-rendered HTML
     layout.html
-    dashboard.html
-    jobs.html
-    report.html
-    profile.html
   database/
     schema.sql
 ```

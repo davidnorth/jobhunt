@@ -4,6 +4,7 @@ import path from "node:path";
 import { buildProfile } from "./lib/profile.js";
 import { getStats, getJobs, getJob, getRuns, getRun, updateJobStatus } from "./lib/store.js";
 import { runNow } from "./lib/scheduler.js";
+import { listVariants, renderCv } from "./lib/cv.js";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const PORT = Number(process.env.PORT) || 4322;
@@ -52,6 +53,7 @@ export function createApp({ liveReload = false } = {}) {
       .replace("{{activeJobs}}", activeNav === "jobs" ? "active" : "")
       .replace("{{activeReports}}", activeNav === "reports" ? "active" : "")
       .replace("{{activeProfile}}", activeNav === "profile" ? "active" : "")
+      .replace("{{activeCvs}}", activeNav === "cvs" ? "active" : "")
       .replace("{{liveReload}}", "");
   }
 
@@ -141,6 +143,25 @@ export function createApp({ liveReload = false } = {}) {
       res.send(html);
     } catch (err) {
       res.status(500).send(errorHtml(err));
+    }
+  });
+
+  app.get("/cvs", async (_req, res) => {
+    try {
+      const variants = await listVariants();
+      const html = await render("CVs", cvsHtml(variants), "cvs");
+      res.send(html);
+    } catch (err) {
+      res.status(500).send(errorHtml(err));
+    }
+  });
+
+  app.get("/cvs/:name", async (req, res) => {
+    try {
+      const html = await renderCv(req.params.name);
+      res.send(html);
+    } catch (err) {
+      res.status(404).send(`<pre>${esc(String(err.message))}</pre>`);
     }
   });
 
@@ -408,6 +429,26 @@ function reportDetailHtml(run, jobs) {
     </div>
     <h2>Jobs in this run</h2>
     ${jobs.length === 0 ? "<p>No jobs in this run.</p>" : jobTableHtml(jobs)}
+  </div>`;
+}
+
+// ---- CVs Page ----
+
+function cvsHtml(variants) {
+  const cards = variants.map((name) => `
+    <div class="cv-card">
+      <div class="cv-card-name">${esc(name)}</div>
+      <div class="cv-card-actions">
+        <a class="btn btn--secondary" href="/cvs/${esc(name)}" target="_blank">Preview / Print</a>
+      </div>
+    </div>
+  `).join("");
+
+  return `
+  <div class="cvs-page">
+    <h1>CVs</h1>
+    <p class="subtitle">Click a variant to preview. Use your browser's print dialog (Cmd+P) to save as PDF.</p>
+    <div class="cv-list">${cards}</div>
   </div>`;
 }
 
